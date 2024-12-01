@@ -19,7 +19,7 @@ app.use(
     methods: ["GET", "POST", "DELETE", "UPDATE", "PUT", "PATCH"],
     origin: [
       "http://localhost:3000",
-      "https://earnest-starlight-947cce.netlify.app/",
+      "https://earnest-starlight-947cce.netlify.app",
     ],
   })
 );
