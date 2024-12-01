@@ -17,7 +17,10 @@ app.use(
   cors({
     credentials: true,
     methods: ["GET", "POST", "DELETE", "UPDATE", "PUT", "PATCH"],
-    origin: ["http://localhost:3000"],
+    origin: [
+      "http://localhost:3000",
+      "https://earnest-starlight-947cce.netlify.app/",
+    ],
   })
 );
 const Admin = require("./routes/Admin");
