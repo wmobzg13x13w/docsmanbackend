@@ -20,6 +20,7 @@ app.use(
     origin: [
       "http://localhost:3000",
       "https://earnest-starlight-947cce.netlify.app",
+      "https://docsmanfrontend-na2vtj3x4-wmobzg13x13ws-projects.vercel.app/",
     ],
   })
 );
