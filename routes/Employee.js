@@ -43,6 +43,8 @@ router.delete("/delete/:empId", authenticateToken, async (req, res) => {
     const removedEmployee = await employee.deleteOne({
       _id: req.params.empId,
     });
+    await file.deleteMany({ assignedTo: req.params.empId });
+
     res.status(200).send(removedEmployee);
   } catch (err) {
     res.status(400).send({ message: err });

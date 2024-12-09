@@ -26,6 +26,8 @@ app.use(
 const Admin = require("./routes/Admin");
 const Employee = require("./routes/Employee");
 const Files = require("./routes/Files");
+const Expense = require("./routes/Expense");
+const Payment = require("./routes/Payments");
 
 mongoose
   .connect(process.env.DB_CONNECTION)
@@ -38,5 +40,7 @@ mongoose
 app.use("/admin", Admin);
 app.use("/employee", Employee);
 app.use("/files", Files);
+app.use("/expense", Expense);
+app.use("/payment", Payment);
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
