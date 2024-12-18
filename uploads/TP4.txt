@@ -1,0 +1,114 @@
+TP4
+
+1/
+conn system/system
+conn c#sarra/sarra
+2/
+desc USER_TYPES;
+select type_name from user_types;
+select typecode,attributes from user_types;
+3/
+desc USER_TYPE_ATTRS;
+select type_name,attr_name,inherited from USER_TYPE_ATTRS;
+4/
+select table_name,nested from USER_OBJECT_TABLES;
+5/
+desc USER_COLL_TYPES;
+select type_name,coll_type from USER_COLL_TYPES;
+6/
+select type_name,text from USER_TYPE_VERSIONS;
+7/
+insert into cptcourant values ('cc8',5400,sysdate ,(select ref (cli)from client cli where cli.num=5),
+0, signature_nt_type(signature_elt_nt_type(6,'R'),signature_elt_nt_type(6,'D')));
+8/
+update cptcourant set ref_client=(select ref(cli)from client cli where cli.num=2)
+where ncompte='cc8';
+9/
+
+CREATE OR REPLACE PROCEDURE pl_sql_drop_client(paramcli IN NUMBER) IS
+BEGIN
+ 
+  DELETE FROM cptepargne cep
+  WHERE cep.ref_client.num = paramcli;
+
+ 
+  DELETE FROM mouvement mvt
+  WHERE mvt.ref_cptcourant.ncompte IN (
+    SELECT cpt.ncompte
+    FROM cptcourant cpt
+    WHERE cpt.ref_client.num = paramcli
+  );
+
+  DELETE FROM cptcourant cpt
+  WHERE cpt.ref_client.num = paramcli;
+
+  DELETE FROM client
+  WHERE num = paramcli;
+
+  COMMIT;
+END;
+/
+10/
+select cpt.ncompte,cpt.solde from cptcourant cpt where cpt.ref_client.num=2;
+11/
+select cpt.ncompte,cpt.solde from cptcourant cpt where cpt.ref_client.num=2
+union
+select cet.ncompte,cet.solde from cptepargne cet where cet.ref_client.num=2;
+12/
+select cpt.ref_client.num,cpt.ref_client.nom,cpt.ref_client.adresse,cpt.ncompte
+from cptcourant cpt where cpt.solde<1000;
+13/
+select  cep.ref_client.num,cep.ref_client.nom,count(*) from cptepargne cep
+group by (cep.ref_client .num,cep.ref_client.nom);
+14/
+select mvt.ref_client.num,mvt.ref_client.nom,mvt.dateop,mvt.montant from mouvement mvt
+where mvt.ref_cptcourant.ncompte='cc7';
+15/
+select count (*) from the (select numtel from client where num=3);
+16/
+select nt.num,nt.droit from the (select signature_nt from cptcourant where ncompte='cc8')nt;
+17/
+alter type client_type add member
+function nbcepargne return number cascade;
+create or replace type body client_type as member function nbcepargne
+ return number is nbc number;
+begin
+select count (*) into nbc from cptepargne cep
+ where cep.ref_client.num=self.num;
+return nbc;
+end nbcepargne;
+end;
+/
+select cli.num,cli.nbcepargne() from client cli;
+18/
+alter type cptepargne_type add member
+function calculInteret return number cascade;
+create or replace type body cptepargne_type as member function calculInteret
+ return number is somme number;
+begin
+select solde*(1+txint/100)into somme from cptepargne
+ where ncompte=self.ncompte;
+return somme;
+end calculInteret;
+end;
+/
+18.5/ajouter une methode nbsagntaire au cptcourant_type
+qui retourne le nombre des signataires du cptcourant:
+
+alter type cptcourant_type add member
+function nbsagntaire  return number cascade;
+create or replace type body cptcourant_type as member function nbsagntaire
+return number is nbs number;
+begin
+select count (distinct(nt.num))into nbs from the(select signature_nt from
+cptcourant where ncompte=self.ncompte)nt;
+return nbs;
+end nbsagntaire;
+end;
+/
+19/
+desc USER_TYPE_METHODS;
+select method_type from USER_TYPE_METHODS;
+20/
+desc USER_METHOD_RESULTS;
+select type_name ,method_name,result_type_name from USER_METHOD_RESULTS;

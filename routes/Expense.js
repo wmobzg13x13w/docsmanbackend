@@ -33,14 +33,22 @@ router.get("/getall", async (req, res) => {
 
 router.get("/total", authenticateToken, async (req, res) => {
   try {
-    const expenses = await Expense.find({});
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+    const expenses = await Expense.find({
+      date: { $gte: startOfMonth, $lte: endOfMonth }, // Filter by date
+    });
+
     let totalAmount = 0;
     expenses.forEach((expense) => {
       totalAmount += expense.amount;
     });
+
     res.status(200).send({ totalAmount });
   } catch (err) {
-    res.status(400).send({ message: err });
+    res.status(400).send({ message: err.message }); // Send err.message for better error handling
   }
 });
 router.get("/:id", async (req, res) => {

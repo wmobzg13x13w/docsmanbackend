@@ -17,7 +17,7 @@ app.use(
   cors({
     credentials: true,
     methods: ["GET", "POST", "DELETE", "UPDATE", "PUT", "PATCH"],
-    origin: ["*"],
+    origin: ["http://localhost:3000"],
   })
 );
 const Admin = require("./routes/Admin");

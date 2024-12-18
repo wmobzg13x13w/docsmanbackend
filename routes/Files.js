@@ -77,7 +77,13 @@ router.post(
 
 router.get("/totalamount", authenticateToken, async (req, res) => {
   try {
-    const allFiles = await file.find({});
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+    const allFiles = await file.find({
+      createdAt: { $gte: startOfMonth, $lte: endOfMonth },
+    });
 
     let totalAmount = 0;
     allFiles.forEach((file) => {
